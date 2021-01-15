@@ -4,6 +4,18 @@ import socket
 
 import pychromecast
 
+def play(mc, volume, path):
+    mc.play_media(path, 'audio/mp3')
+    mc.block_until_active()
+    mc.pause()
+    time.sleep(0.5)
+    ghome.set_volume(volume)
+    time.sleep(1)
+    mc.play()
+    while not mc.status.player_is_idle:
+        time.sleep(1)
+    mc.stop()
+
 ghome_ip = '192.168.0.26'
 mp3_ip = '192.168.1.3'
 
@@ -17,19 +29,7 @@ ghome.set_volume(0)
 
 mc = ghome.media_controller
 
-mp3_path = 'http://{}/hours/mp3/{}.mp3'.format(mp3_ip, time_str)
-mc.play_media(mp3_path, 'audio/mp3')
+play(mc, volume, 'http://{}/hours/mp3/intro.mp3'.format(mp3_ip))
+play(mc, volume, 'http://{}/hours/mp3/{}.mp3'.format(mp3_ip, time_str))
 
-mc.block_until_active()
-mc.pause()
-
-time.sleep(0.5)
-ghome.set_volume(volume)
-time.sleep(1)
-
-mc.play()
-while not mc.status.player_is_idle:
-    time.sleep(1)
-
-mc.stop()
 ghome.quit_app()
